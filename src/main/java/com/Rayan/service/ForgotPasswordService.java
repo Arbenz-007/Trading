@@ -3,12 +3,14 @@ package com.Rayan.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.Rayan.domain.VerificationType;
 import com.Rayan.model.ForgotPasswordToken;
 import com.Rayan.model.User;
 import com.Rayan.repo.ForgotPasswordRepo;
 
+@Service
 public class ForgotPasswordService implements IForgotPassword {
 
 	@Autowired

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.Rayan.domain.OrderType;
 import com.Rayan.model.Order;
@@ -11,6 +12,7 @@ import com.Rayan.model.User;
 import com.Rayan.model.Wallet;
 import com.Rayan.repo.WalletRepo;
 
+@Service
 public class WalletService implements IWallet {
 
 	@Autowired
