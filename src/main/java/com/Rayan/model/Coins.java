@@ -82,7 +82,7 @@ public class Coins {
 	    private String atlDate;
 
 	    @JsonProperty("roi")
-	    private Object roi;
+	    private Roi roi;
 
 	    @JsonProperty("last_updated")
 	    private String lastUpdated;
@@ -119,7 +119,7 @@ public class Coins {
 	            double atl,
 	            double atlChangePercentage,
 	            String atlDate,
-	            Object roi,
+	            Roi roi,
 	            String lastUpdated,
 	            int marketCapRankWithRehypothecated
 	    ) {
@@ -248,8 +248,8 @@ public class Coins {
 	    public String getAtlDate() { return atlDate; }
 	    public void setAtlDate(String atlDate) { this.atlDate = atlDate; }
 
-	    public Object getRoi() { return roi; }
-	    public void setRoi(Object roi) { this.roi = roi; }
+	    public Roi getRoi() { return roi; }
+	    public void setRoi(Roi roi) { this.roi = roi; }
 
 	    public String getLastUpdated() { return lastUpdated; }
 	    public void setLastUpdated(String lastUpdated) {

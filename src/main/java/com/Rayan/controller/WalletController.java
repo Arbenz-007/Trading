@@ -9,14 +9,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Rayan.domain.WalletTransactionType;
 import com.Rayan.model.Order;
+import com.Rayan.model.PaymentOrder;
 import com.Rayan.model.User;
 import com.Rayan.model.Wallet;
 import com.Rayan.model.WalletTransaction;
+import com.Rayan.response.PaymentResponse;
 import com.Rayan.service.OrderService;
+import com.Rayan.service.PaymentService;
 import com.Rayan.service.UserService;
 import com.Rayan.service.WalletService;
 
@@ -32,6 +36,9 @@ public class WalletController {
 	
 	@Autowired
 	private OrderService orderService;
+	
+	@Autowired
+	private PaymentService paymentService; 
 	
 	@GetMapping("/api/wallet")
 	public ResponseEntity<Wallet> getUserWallet(@RequestHeader("Authorisation") String jwt) throws Exception{
@@ -65,6 +72,28 @@ public class WalletController {
 		Order order=orderService.getOrderById(orderId);
 		
 		Wallet wallet=walletService.payOrderPayement(order, user);
+		return new ResponseEntity<Wallet>(wallet,HttpStatus.ACCEPTED);
+		
+	}
+	
+	
+	@PutMapping("/api/wallet/deposit")
+	public ResponseEntity<Wallet> addBalanceToWallet(
+			@RequestHeader("Authorisation") String jwt,
+			@RequestParam(name="order_id") Long orderId,
+			@RequestParam(name="payment_id") String paymentId) throws Exception{
+		
+		User user=userService.findUserProfileByJwt(jwt);
+		
+		Wallet wallet=walletService.getUserWallet(user);
+		
+		PaymentOrder order=paymentService.getPaymentOrderById(orderId);
+		
+		Boolean status=paymentService.proceedPaymentOrder(order, paymentId);
+		
+		if(status) {
+			wallet=walletService.addBalance(wallet, order.getAmount());
+		}
 		return new ResponseEntity<Wallet>(wallet,HttpStatus.ACCEPTED);
 		
 	}
