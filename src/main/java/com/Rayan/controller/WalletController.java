@@ -1,5 +1,7 @@
 package com.Rayan.controller;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,6 @@ import com.Rayan.service.UserService;
 import com.Rayan.service.WalletService;
 
 @RestController
-@RequestMapping("/api/wallet")
 public class WalletController {
 	
 	@Autowired
@@ -41,7 +42,7 @@ public class WalletController {
 	private PaymentService paymentService; 
 	
 	@GetMapping("/api/wallet")
-	public ResponseEntity<Wallet> getUserWallet(@RequestHeader("Authorisation") String jwt) throws Exception{
+	public ResponseEntity<Wallet> getUserWallet(@RequestHeader("Authorization") String jwt) throws Exception{
 		User user=userService.findUserProfileByJwt(jwt);
 		
 		Wallet wallet=walletService.getUserWallet(user);
@@ -51,7 +52,7 @@ public class WalletController {
 	
 	@PutMapping("/api/wallet/{walletId}/transfer")
 	public ResponseEntity<Wallet> walletToWalletTransfer(
-			@RequestHeader("Authorisation") String jwt,
+			@RequestHeader("Authorization") String jwt,
 			@PathVariable Long walletId,
 			@RequestBody WalletTransaction req ) throws Exception{
 		
@@ -79,7 +80,7 @@ public class WalletController {
 	
 	@PutMapping("/api/wallet/deposit")
 	public ResponseEntity<Wallet> addBalanceToWallet(
-			@RequestHeader("Authorisation") String jwt,
+			@RequestHeader("Authorization") String jwt,
 			@RequestParam(name="order_id") Long orderId,
 			@RequestParam(name="payment_id") String paymentId) throws Exception{
 		
@@ -91,6 +92,9 @@ public class WalletController {
 		
 		Boolean status=paymentService.proceedPaymentOrder(order, paymentId);
 		
+		if(wallet.getBalance()==null) {
+			wallet.setBalance(BigDecimal.valueOf(0));
+		}
 		if(status) {
 			wallet=walletService.addBalance(wallet, order.getAmount());
 		}

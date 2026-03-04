@@ -15,6 +15,6 @@ public interface IPayment {
 	
 	boolean proceedPaymentOrder(PaymentOrder paymentOrder,String paymentId) throws RazorpayException;
 	
-	PaymentResponse createRazorpayPaymentLink(User user, Long amount) throws RazorpayException;
+	PaymentResponse createRazorpayPaymentLink(User user, Long amount,Long orderId) throws RazorpayException;
 	
 }

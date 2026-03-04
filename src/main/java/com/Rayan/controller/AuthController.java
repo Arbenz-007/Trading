@@ -23,6 +23,7 @@ import com.Rayan.response.AuthResponse;
 import com.Rayan.service.CustomerUserDetailService;
 import com.Rayan.service.EmailService;
 import com.Rayan.service.TwoFactorOtpService;
+import com.Rayan.service.WatchlistService;
 import com.Rayan.utils.OtpUtils;
 
 @RestController
@@ -41,6 +42,9 @@ public class AuthController {
 	@Autowired
 	private EmailService emailService;
 	
+	@Autowired
+	private WatchlistService watchlistService;
+	
 	@PostMapping("/signup")
 	public ResponseEntity<AuthResponse> register(@RequestBody User user) throws Exception{
 		
@@ -57,6 +61,7 @@ public class AuthController {
 		
 		User savedUser= userRepo.save(newUser);
 		
+		watchlistService.createWatchlist(savedUser);
 		
 		Authentication auth= new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword());
 		
@@ -84,7 +89,8 @@ public class AuthController {
 		
 		User authUser=userRepo.findByEmail(userName);
 		
-		if(user.getTwoFactorAuth().isInEnabled()) {
+		if(user.getTwoFactorAuth() != null 
+		        && user.getTwoFactorAuth().isInEnabled()) {
 			
 			AuthResponse res= new AuthResponse();
 			res.setMessage("Two Factor aith is enabled");

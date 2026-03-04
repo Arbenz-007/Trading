@@ -17,12 +17,14 @@ public class WalletService implements IWallet {
 
 	@Autowired
 	private WalletRepo walletRepo;
+	
 	@Override
 	public Wallet getUserWallet(User user) {
 		Wallet wallet=walletRepo.findByUserId(user.getId());
 		if(wallet==null) {
 			wallet=new Wallet();
 			wallet.setUser(user);
+			walletRepo.save(wallet);
 		}
 		
 		return wallet;

@@ -34,7 +34,7 @@ public class AssetController {
 	@GetMapping("/coin/{coinId}/user")
 	public ResponseEntity<Asset> getAssetByUserIdAndCoinId(
 			@PathVariable String coinId,
-			@RequestHeader("Authorisation") String jwt) throws Exception{
+			@RequestHeader("Authorization") String jwt) throws Exception{
 		User user = userService.findUserProfileByJwt(jwt);
 		Asset asset=assetService.findAssetByUserIdAndCoinId(user.getId(), coinId);
 		return ResponseEntity.ok().body(asset);

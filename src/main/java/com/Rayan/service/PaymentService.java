@@ -27,7 +27,7 @@ public class PaymentService implements IPayment {
 	@Value("${razorpay.api.key}")
 	private String apikey;
 	
-	@Value("${razorpay.api.secret")
+	@Value("${razorpay.api.secret}")
 	private String apiSecretKey;
 	
 	@Override
@@ -36,6 +36,7 @@ public class PaymentService implements IPayment {
 		paymentOrder.setAmount(amount);
 		paymentOrder.setPaymentMethod(paymentMethod);
 		paymentOrder.setUser(user);
+		paymentOrder.setStatus(PaymentOrderStatus.PENDING);
 		
 		
 		return paymentOrderRepo.save(paymentOrder);
@@ -49,6 +50,9 @@ public class PaymentService implements IPayment {
 
 	@Override
 	public boolean proceedPaymentOrder(PaymentOrder paymentOrder, String paymentId) throws RazorpayException {
+		if(paymentOrder.getStatus()==null) {
+			paymentOrder.setStatus(PaymentOrderStatus.PENDING);
+		}
 		if(paymentOrder.getStatus().equals(PaymentOrderStatus.PENDING)) {
 			if(paymentOrder.getPaymentMethod().equals(PaymentMethod.RAZORPAY)) {
 				RazorpayClient razorpay=new RazorpayClient(apikey,apiSecretKey);
@@ -74,7 +78,7 @@ public class PaymentService implements IPayment {
 	}
 
 	@Override
-	public PaymentResponse createRazorpayPaymentLink(User user, Long amount) throws RazorpayException {
+	public PaymentResponse createRazorpayPaymentLink(User user, Long amount,Long orderId) throws RazorpayException {
 		Long Amount=amount*100;
 		try {
 			//Instantite a Razorpay client with your key ID and secret
@@ -82,7 +86,7 @@ public class PaymentService implements IPayment {
 			
 			//Create a JSON object with the payment link request parameters
 			JSONObject paymentLinkRequest= new JSONObject();
-			paymentLinkRequest.put("amount", amount);
+			paymentLinkRequest.put("amount", Amount);
 			paymentLinkRequest.put("currency", "INR");
 			
 			//Create a JSON object with the customer details
@@ -97,10 +101,10 @@ public class PaymentService implements IPayment {
 			paymentLinkRequest.put("notify", notify);
 			
 			//set the remainder settings
-			paymentLinkRequest.put("remainder_enable", true);
+//			paymentLinkRequest.put("remainder_enable", true);
 			
 			//set the callback url and method
-			paymentLinkRequest.put("callback_url","http://localhost:8080/wallet");
+			paymentLinkRequest.put("callback_url","http://localhost:5173/wallet?order_id="+orderId);
 			paymentLinkRequest.put("callback_method","get");
 			
 			//create the payment link using the paymentlink.create() method

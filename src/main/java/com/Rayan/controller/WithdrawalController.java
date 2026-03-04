@@ -37,7 +37,7 @@ public class WithdrawalController {
 			@PathVariable Long amount,
 			@RequestHeader("Authorization") String jwt) throws Exception{
 		
-		User user = userService.findUserByEmail(jwt);
+		User user = userService.findUserProfileByJwt(jwt);
 		
 		Wallet userWallet=walletService.getUserWallet(user);
 		
@@ -68,7 +68,7 @@ public class WithdrawalController {
 	@GetMapping("/api/withdrawal")
 	public ResponseEntity<List<Withdrawal>> getWithdrawalHistory(
 			@RequestHeader("Authorization") String jwt) throws Exception{
-		User user = userService.findUserByEmail(jwt);
+		User user = userService.findUserProfileByJwt(jwt);
 		
 		List<Withdrawal> withdrawal=withdrawalService.getUserWithdrawalHistory(user);
 		
